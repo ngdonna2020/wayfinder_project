@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Your Work Environment Analysis</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            {{ analysis|safe }}
+        </div>
+    </div>
+
+    <h3 class="mb-3">Job Recommendations</h3>
+    {% if recommendations %}
+        {% for job in recommendations %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ job.company }} - {{ job.location }}</h6>
+
+                    <span class="badge bg-{% if job.match_score is not none and job.match_score >= 80 %}success
+                                   {% elif job.match_score is not none and job.match_score >= 60 %}warning
+                                   {% else %}secondary{% endif %}">
+                        {{ job.match_score if job.match_score is not none else 'N/A' }}% Match
+                    </span>
+
+                    <p class="card-text mt-2">{{ job.reasoning }}</p>
+
+                    {% if job.url != "#" %}
+                        <a href="{{ job.url }}" class="card-link" target="_blank">Job Posting</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-warning">No job recommendations found.</div>
+    {% endif %}
+
+    <div class="text-end">
+        <a href="{{ url_for('welcome') }}" class="btn btn-secondary mt-3">Start Over</a>
+    </div>
+</div>
+{% endblock %}
